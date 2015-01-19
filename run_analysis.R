@@ -9,7 +9,7 @@ if(!file.exists("./data.zip")) {
 }
 unzip("./data.zip")
 #colLabels <- read.table("./UCI HAR Dataset/features.txt",quote="",stringsAsFactors=FALSE)$V2
-colLabels <- readLines("./UCI HAR Dataset/features.txt")
+colLabels <- readLines("./UCI HAR Dataset/features.txt") # use readLines to preserve row numbers as there are duplicate variable names
 activityLabels <- read.table("./UCI HAR Dataset/activity_labels.txt")
 names(activityLabels) <- c("y","activity")
 
@@ -50,7 +50,7 @@ test <- merge(test,activityLabels) # join activity code to activity string
 data <- rbind(train,test) # join train and tests into one data set
 # data <- select(data, c(subject,activity,grep("mean[^F]|std",names(data)))) # same results as next line
 data <- select(data, c(subject,activity,grep("mean\\(\\)|std\\(\\)",names(data))))
-names(data)[3:length(names(data))] <- sapply(names(data)[3:length(names(data))],splitonspace)
+names(data)[3:length(names(data))] <- sapply(names(data)[3:length(names(data))],splitonspace) # get rid of row numbers now that there are no longer any duplicate row names
 data.g <- group_by(data, subject,activity)
 clean <- summarise_each(data.g, funs(mean))
 
